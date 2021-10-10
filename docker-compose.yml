@@ -14,5 +14,11 @@ services:
       POSTGRES_PASSWORD: root
     volumes:
       - db2:/var/lib/postgresql/data
+  api-cadastro:
+    container_name: 'api-cadastro'
+    build:
+      context: .
+    ports:
+      - "5000:5000"
 volumes:
   db2:
