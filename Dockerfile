@@ -1,11 +1,10 @@
 FROM node:16 as dependencies
 WORKDIR /app
 COPY /package*.json ./
-RUN yarn install
-RUN ls
-
-FROM dependencies as x
 COPY /tsconfig.json ./
+RUN yarn install
+
+FROM dependencies as build
 COPY /src ./
 RUN yarn build
 COPY . .

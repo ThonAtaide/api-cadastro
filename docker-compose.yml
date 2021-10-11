@@ -9,11 +9,11 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: api-cadastro
+      POSTGRES_DB: APICADASTRO
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
     volumes:
-      - db2:/var/lib/postgresql/data
+      - db1:/var/lib/postgresql/data
   api-cadastro:
     container_name: 'api-cadastro'
     build:
@@ -21,4 +21,4 @@ services:
     ports:
       - "5000:5000"
 volumes:
-  db2:
+  db1:
