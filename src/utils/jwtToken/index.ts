@@ -43,7 +43,7 @@ export default class JwtManager {
 
     private decodeToken(token: string): JwtPayloadData {
         const decoded: any = jwt.decode(token);
-        const payload: JwtPayloadData = decoded.payload;
+        const payload: JwtPayloadData = { username: decoded.username };
         return payload;
     }
 }

@@ -7,6 +7,18 @@ export const userRegisterSchema: any = {
         gender: { type: 'string' },
         birth_day: { type: 'string' }
     },
-    required: ['username', 'password', 'name', 'birth_day'],
+    required: ['username', 'password', 'name'],
+    additionalProperties: false
+};
+
+export const userUpdateSchema: any = {
+    type: 'object',
+    properties: {
+        id: { type: 'number' },
+        name: { type: 'string' },
+        gender: { type: 'string' },
+        birth_day: { type: 'string' }
+    },
+    required: ['id', 'name'],
     additionalProperties: false
 };
