@@ -69,7 +69,7 @@ export class UserProfileDao {
             id: resultSet[0].id,
             name: resultSet[0].name,
             gender: resultSet[0].gender,
-            birth_day: resultSet[0].birth_day
+            birth_day: resultSet[0].birth_day && moment(resultSet[0].birth_day).format("DD-MM-YYYY")
         };
     }
 }

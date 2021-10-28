@@ -126,7 +126,7 @@ export class UserService {
 
     private validateBirthDay(birth_day: string): string {
         try {
-            return moment(birth_day).format("MM-DD-YYYY");
+            return moment(birth_day, "MM-DD-YYYY").format("MM-DD-YYYY");
         } catch (error) {
             throw new InvalidParameterError('Birth day invalid', null);
         }
