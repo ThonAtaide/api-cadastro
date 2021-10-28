@@ -7,6 +7,7 @@ import asyncWrapper from '../utils/asyncWrapper';
 import Authentication from '../auth/service/index';
 import { UserLoggedDto } from '../auth/model';
 import { generateTransaction } from '../utils/database';
+import knex from '../utils/database/index';
 import { Knex } from 'knex';
 
 export class Server {
@@ -46,12 +47,11 @@ export class Server {
 
             const authorization: string = req.headers['authorization'] || '';
             const match = /^Bearer: (.*)$/.exec(authorization);
+            const trx: Knex.Transaction = await knex.transaction();
 
             if (match) {
-                console.log('djskds')
                 const token = match[1];
-                const x = {}
-                const user: UserLoggedDto = await this.authService.validateToken(token, x as Knex.Transaction);
+                const user: UserLoggedDto = await this.authService.validateToken(token, trx);
                 req.user = user.id;
             }
             next();

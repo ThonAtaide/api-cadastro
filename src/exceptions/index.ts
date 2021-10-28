@@ -73,9 +73,30 @@ export class InvalidPasswordError extends CustomError {
     }
 }
 
-export class UserNotCreatedError extends CustomError {
+export class EntityNotCreatedError extends CustomError {
 
     constructor(reason: String) {
         super(reason, 400);
+    }
+}
+
+export class EntityNotUpdatedError extends CustomError {
+
+    constructor(reason: String) {
+        super(reason, 400);
+    }
+}
+
+export class NotFoundError extends CustomError {
+
+    constructor(reason: String) {
+        super(reason, 404);
+    }
+}
+
+export class MissingParameterError extends CustomError {
+
+    constructor(reason: String) {
+        super(reason, 404);
     }
 }
