@@ -35,6 +35,7 @@ export default class Authentication {
         const user: UserAuthenticationFetchDto | null = await repository.findByUsername(payload.username, trx);
 
         if (!user) {
+            console.log('User token not found.')
             throw new InvalidTokenError();
         }
 
