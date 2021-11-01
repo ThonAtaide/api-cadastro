@@ -1,5 +1,5 @@
-import express, { Request, Response, NextFunction } from 'express';
-import config from '../../config/index';
+import { Request, Response, NextFunction } from 'express';
+import config from '../../config';
 import knexLib, { Knex } from 'knex';
 
 const settings = config();

@@ -1,4 +1,4 @@
-import { AddressDto } from '../../address/model/index';
+import { AddressDto } from '../../address/model';
 
 export interface CreateUserDto {
     username: string;

@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import moment, { updateLocale } from 'moment';
+import moment from 'moment';
 import { EntityNotUpdatedError } from '../../exceptions';
 import { UserAuthenticationFetchDto, UserLoginRequestDto } from '../model';
 

@@ -1,14 +1,14 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
-import { InvalidParameterError, CustomError } from '../exceptions/index';
+import { InvalidParameterError, CustomError } from '../exceptions';
 
-import authRouter from '../auth/route/index';
-import userRouter from '../user/route/index';
-import addressRouter from '../address/route/index';
+import authRouter from '../auth/route';
+import userRouter from '../user/route';
+import addressRouter from '../address/route';
 import asyncWrapper from '../utils/asyncWrapper';
-import Authentication from '../auth/service/index';
+import Authentication from '../auth/service';
 import { UserLoggedDto } from '../auth/model';
 import { generateTransaction } from '../utils/database';
-import knex from '../utils/database/index';
+import knex from '../utils/database';
 import { Knex } from 'knex';
 
 export class Server {

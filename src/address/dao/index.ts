@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
-import { EntityNotCreatedError, EntityNotUpdatedError, NotFoundError } from '../../exceptions';
-import { AddressDto } from '../model/index';
+import { EntityNotCreatedError, EntityNotUpdatedError } from '../../exceptions';
+import { AddressDto } from '../model';
 
 export class AddressDao {
 

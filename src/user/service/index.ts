@@ -1,11 +1,10 @@
 import { CreateUserDto, UserDto } from "../model";
-import { UserAuthDao } from '../../auth/dao/index';
-import { UnauthorizedError, InvalidUsernameError, UsernameDuplicatedError, InvalidParameterError, NotFoundError } from '../../exceptions';
+import { UserAuthDao } from '../../auth/dao';
+import { InvalidUsernameError, UsernameDuplicatedError, InvalidParameterError, NotFoundError } from '../../exceptions';
 import bcrypt from 'bcrypt';
 import { Knex } from "knex";
 import { UserProfileDao } from "../dao";
 import moment from 'moment';
-import { UserLoginRequestDto } from "../../auth/model";
 import { AddressDao } from "../../address/dao";
 import {AddressDto} from "../../address/model";
 

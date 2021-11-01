@@ -1,13 +1,13 @@
 import express, { Request, Response, Router } from 'express';
 import asyncWrapper from '../../utils/asyncWrapper';
-import validateSchema from '../../utils/schemaValidator/index';
+import validateSchema from '../../utils/schemaValidator';
 import { CreateUserDto, UserDto } from '../model';
 import { UserService } from '../service';
-import { userRegisterSchema, userUpdateSchema } from './schemas/index';
-import { UserAuthDao } from '../../auth/dao/index'
+import { userRegisterSchema, userUpdateSchema } from './schemas';
+import { UserAuthDao } from '../../auth/dao'
 import { Knex } from 'knex';
 import { UserProfileDao } from '../dao';
-import { validateAuthentication } from '../../utils/validateAuthentication/index';
+import { validateAuthentication } from '../../utils/validateAuthentication';
 import { AddressDao } from '../../address/dao';
 
 const route: Router = express.Router();

@@ -1,13 +1,12 @@
 import express, { Response, Request } from "express";
-import asyncWrapper from '../../utils/asyncWrapper/index';
+import asyncWrapper from '../../utils/asyncWrapper';
 import validateSchema from "../../utils/schemaValidator";
 import { validateAuthentication } from "../../utils/validateAuthentication";
 import { AddressDao } from "../dao";
 import { AddressService } from "../service";
-import { addressCreateSchema, addressUpdateSchema } from './schemas/index';
+import { addressCreateSchema, addressUpdateSchema } from './schemas';
 import { Knex } from "knex";
-import {InvalidParameterError, MissingParameterError, NotFoundError} from "../../exceptions";
-import { extractIdParams } from '../../utils/restResources/index';
+import { extractIdParams } from '../../utils/restResources';
 
 const router = express.Router();
 const service: AddressService = new AddressService(new AddressDao());

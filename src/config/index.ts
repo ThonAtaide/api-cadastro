@@ -1,5 +1,4 @@
 
-
 export interface ISettings {
     DATABASE_URL: string
 }
