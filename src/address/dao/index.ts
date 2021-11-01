@@ -92,6 +92,7 @@ export class AddressDao {
             .returning('*')
 
         if (resultSet.length === 0) {
+            console.log(resultSet)
             console.log(`Address ${addressId} not updated`)
             throw new EntityNotUpdatedError('Address not updated.');
         }

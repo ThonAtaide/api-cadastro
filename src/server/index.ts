@@ -3,6 +3,7 @@ import { InvalidParameterError, CustomError } from '../exceptions/index';
 
 import authRouter from '../auth/route/index';
 import userRouter from '../user/route/index';
+import addressRouter from '../address/route/index';
 import asyncWrapper from '../utils/asyncWrapper';
 import Authentication from '../auth/service/index';
 import { UserLoggedDto } from '../auth/model';
@@ -28,6 +29,7 @@ export class Server {
     private setupRouteModules(): void {
         this.app.use('/auth', authRouter);
         this.app.use('/user', userRouter);
+        this.app.use('/user/address', addressRouter);
     }
 
     private setupBodyParser(): void {
@@ -44,12 +46,13 @@ export class Server {
     private setupAutorization(): void {
 
         this.app.use(asyncWrapper(async (req: Request, _res: Response, next: NextFunction) => {
-
+            console.log('Validating Authorization...')
             const authorization: string = req.headers['authorization'] || '';
             const match = /^Bearer: (.*)$/.exec(authorization);
             const trx: Knex.Transaction = await knex.transaction();
 
             if (match) {
+                console.log('Token was found. Validating it...')
                 const token = match[1];
                 const user: UserLoggedDto = await this.authService.validateToken(token, trx);
                 req.user = user.id;

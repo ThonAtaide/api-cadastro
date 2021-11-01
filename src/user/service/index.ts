@@ -7,6 +7,7 @@ import { UserProfileDao } from "../dao";
 import moment from 'moment';
 import { UserLoginRequestDto } from "../../auth/model";
 import { AddressDao } from "../../address/dao";
+import {AddressDto} from "../../address/model";
 
 
 export class UserService {
@@ -78,7 +79,7 @@ export class UserService {
 
         const addressList = await this.addressRepository.findAddressByUser(userId, trx);
 
-        return { ...user, address: addressList, user_id: undefined };
+        return { ...user, address: this.addressListWithoutUserInfo(addressList), user_id: undefined };
     }
 
     public async updateUser(
@@ -108,6 +109,14 @@ export class UserService {
             throw new NotFoundError('User not found.');
         }
         await this.userAuthRepository.logicalDelete(user_profile.user_id, trx)
+    }
+
+    private addressListWithoutUserInfo(addressList: Array<AddressDto>): Array<AddressDto> {
+        return addressList.map(item => {
+            return {
+                ...item, user_profile_id: undefined
+            };
+        })
     }
 
     private validateUsername(username: string) {
