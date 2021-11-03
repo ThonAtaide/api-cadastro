@@ -1,7 +1,7 @@
 import { Knex } from "knex";
 import { MissingParameterError, NotFoundError } from "../../exceptions";
 import { AddressDao } from "../dao";
-import { AddressDto } from "../model";
+import {AddressDto, AddressFieldsValidator} from "../model";
 
 export class AddressService {
     private addressRepository: AddressDao;
@@ -19,9 +19,15 @@ export class AddressService {
             throw new MissingParameterError('User identifier is missing.');
         }
 
-        const addressCreated = await this.addressRepository
+        AddressFieldsValidator.validateCity(address.city);
+        AddressFieldsValidator.validateCityState(address.city_state);
+        AddressFieldsValidator.validateNeighbor(address.neighbor);
+        AddressFieldsValidator.validateStreet(address.street);
+        AddressFieldsValidator.validateHouseNumber(address.house_number);
+        AddressFieldsValidator.validatePostalCode(address.postal_code);
+
+        return await this.addressRepository
             .createAddress({ ...address, user_profile_id: userId }, trx);
-        return addressCreated;
     }
 
     public async updateAddress(
@@ -32,6 +38,13 @@ export class AddressService {
         if (!addressId) {
             throw new MissingParameterError('Address identifier is missing.');
         }
+
+        AddressFieldsValidator.validateCity(address.city);
+        AddressFieldsValidator.validateCityState(address.city_state);
+        AddressFieldsValidator.validateNeighbor(address.neighbor);
+        AddressFieldsValidator.validateStreet(address.street);
+        AddressFieldsValidator.validateHouseNumber(address.house_number);
+        AddressFieldsValidator.validatePostalCode(address.postal_code);
 
         const addressUpdated = await this.addressRepository
             .updateAddress(addressId, { ...address }, trx);

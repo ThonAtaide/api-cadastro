@@ -54,7 +54,15 @@ export class Server {
             if (match) {
                 console.log('Token was found. Validating it...')
                 const token = match[1];
-                const user: UserLoggedDto = await this.authService.validateToken(token, trx);
+                let user: UserLoggedDto;
+                try {
+                    user = await this.authService.validateToken(token, trx);
+                    trx.commit();
+                }catch (e) {
+                    trx.rollback();
+                    throw e;
+                }
+
                 req.user = user.id;
             }
             next();
@@ -91,7 +99,17 @@ export class Server {
         });
     }
 
+    private setupLogger(): void {
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            res.on('finish', () => {
+                console.log(new Date().toISOString(), `[${req.method}]`, req.url, res.statusCode);
+            });
+            next();
+        });
+    }
+
     public startListen(): void {
+        this.setupLogger();
         this.setupTransaction();
         this.setupBodyParser();
         this.setupAutorization();

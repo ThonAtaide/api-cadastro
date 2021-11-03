@@ -7,7 +7,15 @@ const settings = config();
 const knex = knexLib({
     client: 'pg',
     connection: settings.DATABASE_URL,
-    debug: true
+    debug: false,
+    pool: {
+        min: 2,
+        max: 10,
+        createTimeoutMillis: 4000,
+        acquireTimeoutMillis: 30000,
+        idleTimeoutMillis: 10000,
+        createRetryIntervalMillis: 100
+    },
 });
 
 export default knex;
@@ -28,8 +36,4 @@ export function generateTransaction() {
             next();
         });
     }
-}
-
-export function isViolacaoChaveEstrangeira(err: any) {
-    return err.code === '23503'; // https://www.postgresql.org/docs/8.2/errcodes-appendix.html
 }

@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction } from 'express'
-import { UnauthorizedError } from './exceptions';
-import { Server } from './server/index';
+import { Server } from './server';
+import config from './config';
 
-const server: Server = new Server();
+const { PORT } = config();
+
+const server: Server = new Server(PORT);
 server.startListen();
