@@ -1,6 +1,6 @@
-import { UserLoginRequestDto, UserLoggedDto, UserAuthenticationFetchDto } from '../model/index';
-import { InvalidTokenError, UnauthorizedError } from '../../exceptions/index';
-import JwtManager, { JwtPayloadData, JwtToken } from '../../utils/jwtToken/index';
+import { UserLoginRequestDto, UserLoggedDto, UserAuthenticationFetchDto } from '../model';
+import { InvalidTokenError, UnauthorizedError } from '../../exceptions';
+import JwtManager, { JwtPayloadData, JwtToken } from '../../utils/jwtToken';
 import { UserAuthDao } from '../dao';
 import { Knex } from 'knex';
 import bcrypt from 'bcrypt';

@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import moment from 'moment';
 import { EntityNotCreatedError, EntityNotUpdatedError } from '../../exceptions';
-import { UserDto } from '../model/index';
+import { UserDto } from '../model';
 
 export class UserProfileDao {
 

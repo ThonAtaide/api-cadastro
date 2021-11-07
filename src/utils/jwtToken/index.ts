@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { InvalidTokenError } from '../../exceptions/index';
+import { InvalidTokenError } from '../../exceptions';
 
 export interface JwtPayloadData {
     username: string;

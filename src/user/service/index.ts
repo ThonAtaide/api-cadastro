@@ -1,25 +1,17 @@
-import { CreateUserDto, UserDto } from "../model";
-import { UserAuthDao } from '../../auth/dao/index';
-import { UnauthorizedError, InvalidUsernameError, UsernameDuplicatedError, InvalidParameterError, NotFoundError } from '../../exceptions';
+import {CreateUserDto, UserDto, UserFieldsValidator} from "../model";
+import { UserAuthDao } from '../../auth/dao';
+import { UsernameDuplicatedError, InvalidParameterError, NotFoundError } from '../../exceptions';
 import bcrypt from 'bcrypt';
 import { Knex } from "knex";
 import { UserProfileDao } from "../dao";
-import moment from 'moment';
-import { UserLoginRequestDto } from "../../auth/model";
 import { AddressDao } from "../../address/dao";
 import {AddressDto} from "../../address/model";
-
 
 export class UserService {
 
     private userAuthRepository: UserAuthDao;
     private userProfileRepository: UserProfileDao;
     private addressRepository: AddressDao;
-    private validGenders: string[] = [
-        'Male',
-        'Female',
-        'Unidentified'
-    ];
 
     constructor(
         repository: UserAuthDao,
@@ -33,10 +25,11 @@ export class UserService {
 
     public async createUser(user: CreateUserDto, trx: Knex.Transaction): Promise<UserDto> {
 
-        this.validateUsername(user.username);
-        this.validatePassword(user.password);
-        user = { ...user, birth_day: this.validateBirthDay(user.birth_day) };
-        this.validateGender(user.gender);
+        UserFieldsValidator.validateUsername(user.username);
+        UserFieldsValidator.validatePassword(user.password);
+        UserFieldsValidator.validateName(user.name);
+        user = { ...user, birth_day: UserFieldsValidator.validateBirthDay(user.birth_day) };
+        UserFieldsValidator.validateGender(user.gender);
 
         const existedUser = await this.userAuthRepository.findByUsername(user.username, trx);
 
@@ -55,13 +48,11 @@ export class UserService {
             birth_day: user.birth_day
         }
 
-        const userProfileCreatedId = await this.userProfileRepository.createUser(
+        return await this.userProfileRepository.createUser(
             newUserId,
             userProfileDto,
             trx
         );
-
-        return userProfileCreatedId;
     }
 
     public async getUser(userId: number, trx: Knex.Transaction): Promise<UserDto> {
@@ -77,7 +68,7 @@ export class UserService {
             throw new NotFoundError('User not found');
         }
 
-        const addressList = await this.addressRepository.findAddressByUser(userId, trx);
+        const addressList = await this.addressRepository.findAddressByUser(userId, {}, trx);
 
         return { ...user, address: this.addressListWithoutUserInfo(addressList), user_id: undefined };
     }
@@ -90,17 +81,15 @@ export class UserService {
             throw new InvalidParameterError('User identifier can not be null.', null)
         }
 
+        UserFieldsValidator.validateName(userDto.name);
         if (userDto.birth_day) {
             userDto = {
-                ...userDto, birth_day: this.validateBirthDay(userDto.birth_day)
+                ...userDto, birth_day: UserFieldsValidator.validateBirthDay(userDto.birth_day)
             }
         }
-        this.validateGender(userDto.gender);
+        UserFieldsValidator.validateGender(userDto.gender);
 
-        const updatedUser = await this.userProfileRepository
-            .updateUserProfile(userId, userDto, trx);
-
-        return updatedUser;
+        return await this.userProfileRepository.updateUserProfile(userId, userDto, trx);
     }
 
     public async deleteUser(userId: number, trx: Knex.Transaction): Promise<void> {
@@ -118,33 +107,4 @@ export class UserService {
             };
         })
     }
-
-    private validateUsername(username: string) {
-        const isValid = !!(/^[a-zA-Z0-9]+$/.exec(username))
-        if (!isValid || username.length > 32) {
-            throw new InvalidUsernameError('Username characters are invalid.');
-        }
-    }
-
-    private validatePassword(password: string) {
-        const isValid = !!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.exec(password))
-        if (!isValid || password.length > 32) {
-            throw new InvalidUsernameError('Password characters are invalid.');
-        }
-    }
-
-    private validateBirthDay(birth_day: string): string {
-        try {
-            return moment(birth_day, "MM-DD-YYYY").format("MM-DD-YYYY");
-        } catch (error) {
-            throw new InvalidParameterError('Birth day invalid', null);
-        }
-    }
-
-    private validateGender(gender: string | undefined) {
-        if (gender && !this.validGenders.includes(gender)) {
-            throw new InvalidParameterError('Gender text is invalid', null);
-        }
-    }
-
 }

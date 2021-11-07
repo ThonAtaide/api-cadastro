@@ -1,7 +1,7 @@
 import Ajv from 'ajv';
 import { Request, Response, NextFunction } from 'express';
 
-import { InvalidParameterError } from '../../exceptions/index';
+import { InvalidParameterError } from '../../exceptions';
 
 
 const ajv = new Ajv({

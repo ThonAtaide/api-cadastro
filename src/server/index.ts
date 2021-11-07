@@ -1,14 +1,14 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
-import { InvalidParameterError, CustomError } from '../exceptions/index';
+import { InvalidParameterError, CustomError } from '../exceptions';
 
-import authRouter from '../auth/route/index';
-import userRouter from '../user/route/index';
-import addressRouter from '../address/route/index';
+import authRouter from '../auth/route';
+import userRouter from '../user/route';
+import addressRouter from '../address/route';
 import asyncWrapper from '../utils/asyncWrapper';
-import Authentication from '../auth/service/index';
+import Authentication from '../auth/service';
 import { UserLoggedDto } from '../auth/model';
 import { generateTransaction } from '../utils/database';
-import knex from '../utils/database/index';
+import knex from '../utils/database';
 import { Knex } from 'knex';
 
 export class Server {
@@ -54,7 +54,15 @@ export class Server {
             if (match) {
                 console.log('Token was found. Validating it...')
                 const token = match[1];
-                const user: UserLoggedDto = await this.authService.validateToken(token, trx);
+                let user: UserLoggedDto;
+                try {
+                    user = await this.authService.validateToken(token, trx);
+                    trx.commit();
+                }catch (e) {
+                    trx.rollback();
+                    throw e;
+                }
+
                 req.user = user.id;
             }
             next();
@@ -91,7 +99,17 @@ export class Server {
         });
     }
 
+    private setupLogger(): void {
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            res.on('finish', () => {
+                console.log(new Date().toISOString(), `[${req.method}]`, req.url, res.statusCode);
+            });
+            next();
+        });
+    }
+
     public startListen(): void {
+        this.setupLogger();
         this.setupTransaction();
         this.setupBodyParser();
         this.setupAutorization();
