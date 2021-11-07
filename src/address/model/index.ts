@@ -11,6 +11,15 @@ export interface AddressDto {
     postal_code: string;
 }
 
+export interface AddressQuery {
+    city_state?: string;
+    city?: string;
+    neighbor?: string;
+    street?: string;
+    house_number?: string;
+    postal_code?: string;
+}
+
 export class AddressFieldsValidator {
 
     public static validateCity(city: string) {

@@ -1,12 +1,12 @@
-import express, { Response, Request } from "express";
+import express, {Response, Request} from "express";
 import asyncWrapper from '../../utils/asyncWrapper';
 import validateSchema from "../../utils/schemaValidator";
-import { validateAuthentication } from "../../utils/validateAuthentication";
-import { AddressDao } from "../dao";
-import { AddressService } from "../service";
-import { addressCreateSchema, addressUpdateSchema } from './schemas';
-import { Knex } from "knex";
-import { extractIdParams } from '../../utils/restResources';
+import {validateAuthentication} from "../../utils/validateAuthentication";
+import {AddressDao} from "../dao";
+import {AddressService} from "../service";
+import {addressCreateSchema, addressUpdateSchema} from './schemas';
+import {Knex} from "knex";
+import {extractIdParams} from '../../utils/restResources';
 
 const router = express.Router();
 const service: AddressService = new AddressService(new AddressDao());
@@ -86,8 +86,28 @@ router.get(
     '/',
     validateAuthentication,
     asyncWrapper(async (req: Request, res: Response) => {
+        const {
+            postal_code,
+            city_state,
+            city,
+            neighbor,
+            street,
+            house_number,
+        } = req.query;
+
         const userId = req.user;
-        const address = await service.findAddressByUserId(userId as number, req.uow as Knex.Transaction);
+        const address = await service.findAddressByUserId(
+            userId as number,
+            {
+                postal_code: postal_code as string,
+                city_state: city_state as string,
+                city: city as string,
+                neighbor: neighbor as string,
+                street: street as string,
+                house_number: house_number as string
+            },
+            req.uow as Knex.Transaction
+        );
         res.status(200).send(address);
     })
 );

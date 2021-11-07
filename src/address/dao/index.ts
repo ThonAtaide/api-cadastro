@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import { EntityNotCreatedError, EntityNotUpdatedError } from '../../exceptions';
-import { AddressDto } from '../model';
+import {AddressDto, AddressQuery} from '../model';
 
 export class AddressDao {
 
@@ -55,10 +55,37 @@ export class AddressDao {
         };
     }
 
-    public async findAddressByUser(userId: number, trx: Knex.Transaction): Promise<Array<AddressDto>> {
-        const resultSet = await trx('user_address')
+    public async findAddressByUser(userId: number, queryParams: AddressQuery, trx: Knex.Transaction): Promise<Array<AddressDto>> {
+
+         let query = trx('user_address')
             .select('*')
             .where('user_profile_id', userId);
+
+         if (queryParams.postal_code) {
+             query = query.where('postal_code', 'ilike', `${queryParams.postal_code}%`);
+         }
+
+        if (queryParams.city_state) {
+            query = query.where('city_state', 'ilike', `${queryParams.city_state}%`);
+        }
+
+        if (queryParams.city) {
+            query = query.where('city', 'ilike', `${queryParams.city}%`);
+        }
+
+        if (queryParams.neighbor) {
+            query = query.where('neighbor', 'ilike', `${queryParams.neighbor}%`);
+        }
+
+        if (queryParams.street) {
+            query = query.where('street', 'ilike', `${queryParams.street}%`);
+        }
+
+        if (queryParams.house_number) {
+            query = query.where('house_number', 'ilike', `${queryParams.house_number}%`);
+        }
+
+        const resultSet = await query;
 
         if (resultSet.length === 0) {
             return [];

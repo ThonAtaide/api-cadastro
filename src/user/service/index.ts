@@ -68,7 +68,7 @@ export class UserService {
             throw new NotFoundError('User not found');
         }
 
-        const addressList = await this.addressRepository.findAddressByUser(userId, trx);
+        const addressList = await this.addressRepository.findAddressByUser(userId, {}, trx);
 
         return { ...user, address: this.addressListWithoutUserInfo(addressList), user_id: undefined };
     }

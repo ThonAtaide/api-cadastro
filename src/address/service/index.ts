@@ -1,7 +1,7 @@
 import { Knex } from "knex";
 import { MissingParameterError, NotFoundError } from "../../exceptions";
 import { AddressDao } from "../dao";
-import {AddressDto, AddressFieldsValidator} from "../model";
+import {AddressDto, AddressFieldsValidator, AddressQuery} from "../model";
 
 export class AddressService {
     private addressRepository: AddressDao;
@@ -67,13 +67,13 @@ export class AddressService {
         return {...address, user_profile_id: undefined};
     }
 
-    public async findAddressByUserId(userId: number, trx: Knex.Transaction): Promise<Array<AddressDto>> {
+    public async findAddressByUserId(userId: number, query: AddressQuery, trx: Knex.Transaction): Promise<Array<AddressDto>> {
 
         if (!userId) {
             throw new MissingParameterError(`User identifier is missing.`);
         }
 
-        const searchResult = await this.addressRepository.findAddressByUser(userId, trx);
+        const searchResult = await this.addressRepository.findAddressByUser(userId, query, trx);
         return searchResult.map(item => {
             return {...item, user_profile_id: undefined}
         })
