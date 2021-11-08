@@ -1,5 +1,5 @@
-import { AddressDto } from '../../address/model';
-import {InvalidParameterError, InvalidUsernameError} from "../../exceptions";
+import {AddressDto} from '../../address/model';
+import {InvalidParameterError, InvalidPasswordError, InvalidUsernameError} from "../../exceptions";
 import moment from "moment";
 
 export interface CreateUserDto {
@@ -21,31 +21,48 @@ export interface UserDto {
 
 export enum Gender {
     Male,
-    Female ,
+    Female,
     Unidentified,
 }
 
 export class UserFieldsValidator {
     public static validateUsername(username: string) {
-        const isValid = !!(/^[a-zA-Z0-9]+$/.exec(username))
-        if (!isValid || username.length > 32) {
+        if (username.length > 32) {
+            throw new InvalidUsernameError('Username characters exceeded size limit.');
+        }
+        if (username.length < 6) {
+            throw new InvalidUsernameError('Username characters less than expected size.');
+        }
+
+        const isValid = !!(/^[a-zA-Z0-9]{6,}$/.exec(username));
+
+        if (!isValid) {
             throw new InvalidUsernameError('Username characters are invalid.');
         }
     }
 
     public static validatePassword(password: string) {
+        if (password.length > 32) {
+            throw new InvalidPasswordError('Password characters exceeded size limit.');
+        }
+
+        if (password.length < 8) {
+            throw new InvalidPasswordError('Password characters less than expected size.');
+        }
+
         const isValid = !!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.exec(password))
-        if (!isValid || password.length > 32) {
-            throw new InvalidUsernameError('Password characters are invalid.');
+        if (!isValid) {
+            throw new InvalidPasswordError('Password characters are invalid.');
         }
     }
 
     public static validateBirthDay(birth_day: string): string {
-        try {
-            return moment(birth_day, "MM-DD-YYYY").format("MM-DD-YYYY");
-        } catch (error) {
+
+        const date = moment(birth_day, "DD-MM-YYYY").format("MM-DD-YYYY");
+        if (date.toString() === 'Invalid date') {
             throw new InvalidParameterError('Birth day invalid', null);
         }
+        return moment(birth_day, "DD-MM-YYYY").format("MM-DD-YYYY");
     }
 
     public static validateGender(gender: string | undefined) {
@@ -57,6 +74,10 @@ export class UserFieldsValidator {
     public static validateName(name: string) {
         if (name.length > 60) {
             throw new InvalidParameterError('Name size is bigger than allowed.', null);
+        }
+
+        if (name.length < 4) {
+            throw new InvalidParameterError('Name size is less than expected.', null);
         }
     }
 }

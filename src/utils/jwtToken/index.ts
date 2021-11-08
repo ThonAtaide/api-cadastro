@@ -1,19 +1,21 @@
 import jwt from 'jsonwebtoken';
 import { InvalidTokenError } from '../../exceptions';
+import config from '../../config/';
+const settings = config();
 
 export interface JwtPayloadData {
     username: string;
 }
 
 export interface JwtToken {
-    token: String;
+    token: string;
 }
 
 export default class JwtManager {
 
     private secret_key: string;
     constructor() {
-        this.secret_key = 'dsjhdsgdsdsgjshjhskjdgshjdsfsagghsfhs'; //TODO replace by environment variable
+        this.secret_key = settings.SECRET_KEY;
     }
 
     public generateJwtToken(payload: JwtPayloadData): JwtToken {
@@ -43,7 +45,6 @@ export default class JwtManager {
 
     private decodeToken(token: string): JwtPayloadData {
         const decoded: any = jwt.decode(token);
-        const payload: JwtPayloadData = { username: decoded.username };
-        return payload;
+        return { username: decoded.username };
     }
 }
