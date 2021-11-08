@@ -39,11 +39,11 @@ describe('Testing user service', () => {
     //         .toThrow()
     // });
 
-    test('If user has invalid fields - name length more than 60', async () => {
-        await expect(service.createUser({...arnaldo, name: 'fdhjdgjhgjdsfhgsafgfdsagfsajdjkshdsgjdsgjfasytryasytsaytrasyt'}, trx))
-            .rejects
-            .toThrow();
-    });
+    // test('If user has invalid fields - name length more than 60', async () => {
+    //     await expect(service.createUser({...arnaldo, name: 'fdhjdgjhgjdsfhgsafgfdsagfsajdjkshdsgjdsgjfasytryasytsaytrasyt'}, trx))
+    //         .rejects
+    //         .toThrow();
+    // });
 
     // test('If user has invalid fields - Gender', async () => {
     //     await expect(service.createUser({...arnaldo, gender: 'male'}, trx))
