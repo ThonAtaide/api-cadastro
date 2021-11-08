@@ -9,7 +9,6 @@ export class UserProfileDao {
         user_auth_id: number,
         user: UserDto,
         trx: Knex.Transaction): Promise<UserDto> {
-        console.log('user: ', user);
         const resultSet = await trx('user_profile')
             .insert({
                 name: user.name,

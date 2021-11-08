@@ -1,12 +1,12 @@
-import {CreateUserDto} from "../../../src/user/model";
+import {CreateUserDto, UserFieldsValidator} from "../../../src/user/model";
 import bcrypt from "bcrypt";
 import {Knex} from "knex";
 
 export const arnaldo: CreateUserDto = {
     username: 'ArnaldoCesar',
     password: 'GacibaM1lGr4u',
-    name: 'Arnaldo César Coelho',
-    birth_day: '1950-07-12',
+    name: 'Arnaldo Cesar Coelho',
+    birth_day: '12-07-1950',
     gender: 'Male',
 }
 
@@ -14,7 +14,7 @@ export const galvao: CreateUserDto = {
     username: 'GalvaoBueno128878dsdhgjdsgjsdjhd',
     password: 'VaiGanharVaiPerderNjr10EhHexaNos',
     name: 'Galvão Bueno',
-    birth_day: '1945-03-25',
+    birth_day: '25-03-1945',
     gender: 'Male',
 }
 
@@ -33,7 +33,7 @@ export const createUserToTest = async (user: CreateUserDto, trx: Knex.Transactio
     const resultSet = await trx('user_profile')
         .insert({
             name: user.name,
-            birth_day: user.birth_day,
+            birth_day: UserFieldsValidator.validateBirthDay(user.birth_day),
             gender: user.gender,
             user_id: user_id
         }).returning('id');

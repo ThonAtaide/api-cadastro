@@ -6,6 +6,7 @@ import { Knex } from "knex";
 import { UserProfileDao } from "../dao";
 import { AddressDao } from "../../address/dao";
 import {AddressDto} from "../../address/model";
+import moment from "moment";
 
 export class UserService {
 
@@ -48,11 +49,12 @@ export class UserService {
             birth_day: user.birth_day
         }
 
-        return await this.userProfileRepository.createUser(
+         const userDto = await this.userProfileRepository.createUser(
             newUserId,
             userProfileDto,
             trx
         );
+        return {...userDto, birth_day: this.convertDateFromDatabaseToShortDate(userDto.birth_day)}
     }
 
     public async getUser(userId: number, trx: Knex.Transaction): Promise<UserDto> {
@@ -70,7 +72,11 @@ export class UserService {
 
         const addressList = await this.addressRepository.findAddressByUser(userId, {}, trx);
 
-        return { ...user, address: this.addressListWithoutUserInfo(addressList), user_id: undefined };
+        return {
+            ...user,
+            birth_day:  this.convertDateFromDatabaseToShortDate(user.birth_day),
+            address: this.addressListWithoutUserInfo(addressList), user_id: undefined
+        };
     }
 
     public async updateUser(
@@ -89,7 +95,8 @@ export class UserService {
         }
         UserFieldsValidator.validateGender(userDto.gender);
 
-        return await this.userProfileRepository.updateUserProfile(userId, userDto, trx);
+        const userUpdated = await this.userProfileRepository.updateUserProfile(userId, userDto, trx);
+        return {...userUpdated, birth_day: this.convertDateFromDatabaseToShortDate(userUpdated.birth_day)}
     }
 
     public async deleteUser(userId: number, trx: Knex.Transaction): Promise<void> {
@@ -106,5 +113,10 @@ export class UserService {
                 ...item, user_profile_id: undefined
             };
         })
+    }
+
+    private convertDateFromDatabaseToShortDate(date: string | undefined): string | undefined{
+        if (!date) return undefined;
+        return moment(date, 'YYYY-MM-DD').format('DD-MM-YYYY');
     }
 }

@@ -1,4 +1,4 @@
-import { AddressDto } from '../../address/model';
+import {AddressDto} from '../../address/model';
 import {InvalidParameterError, InvalidPasswordError, InvalidUsernameError} from "../../exceptions";
 import moment from "moment";
 
@@ -21,7 +21,7 @@ export interface UserDto {
 
 export enum Gender {
     Male,
-    Female ,
+    Female,
     Unidentified,
 }
 
@@ -57,11 +57,12 @@ export class UserFieldsValidator {
     }
 
     public static validateBirthDay(birth_day: string): string {
-        try {
-            return moment(birth_day, "MM-DD-YYYY").format("MM-DD-YYYY");
-        } catch (error) {
+
+        const date = moment(birth_day, "DD-MM-YYYY").format("MM-DD-YYYY");
+        if (date.toString() === 'Invalid date') {
             throw new InvalidParameterError('Birth day invalid', null);
         }
+        return moment(birth_day, "DD-MM-YYYY").format("MM-DD-YYYY");
     }
 
     public static validateGender(gender: string | undefined) {
@@ -73,6 +74,10 @@ export class UserFieldsValidator {
     public static validateName(name: string) {
         if (name.length > 60) {
             throw new InvalidParameterError('Name size is bigger than allowed.', null);
+        }
+
+        if (name.length < 4) {
+            throw new InvalidParameterError('Name size is less than expected.', null);
         }
     }
 }
