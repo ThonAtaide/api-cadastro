@@ -4,6 +4,7 @@ import JwtManager, { JwtPayloadData, JwtToken } from '../../utils/jwtToken';
 import { UserAuthDao } from '../dao';
 import { Knex } from 'knex';
 import bcrypt from 'bcrypt';
+import {UserFieldsValidator} from "../../user/model";
 
 const repository: UserAuthDao = new UserAuthDao();
 
@@ -11,11 +12,14 @@ export default class Authentication {
 
     private jwtManager: JwtManager;
 
-    constructor() {
-        this.jwtManager = new JwtManager();
+    constructor(jwtManager: JwtManager) {
+        this.jwtManager = jwtManager;
     }
 
     public async authenticate(credentials: UserLoginRequestDto, trx: Knex.Transaction): Promise<JwtToken> {
+
+        UserFieldsValidator.validateUsername(credentials.username);
+        UserFieldsValidator.validatePassword(credentials.password);
         const user: UserAuthenticationFetchDto | null = await repository.findByUsername(credentials.username, trx);
 
         if (!user) {

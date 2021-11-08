@@ -1,5 +1,5 @@
 import { AddressDto } from '../../address/model';
-import {InvalidParameterError, InvalidUsernameError} from "../../exceptions";
+import {InvalidParameterError, InvalidPasswordError, InvalidUsernameError} from "../../exceptions";
 import moment from "moment";
 
 export interface CreateUserDto {
@@ -27,16 +27,32 @@ export enum Gender {
 
 export class UserFieldsValidator {
     public static validateUsername(username: string) {
-        const isValid = !!(/^[a-zA-Z0-9]+$/.exec(username))
-        if (!isValid || username.length > 32) {
+        if (username.length > 32) {
+            throw new InvalidUsernameError('Username characters exceeded size limit.');
+        }
+        if (username.length < 6) {
+            throw new InvalidUsernameError('Username characters less than expected size.');
+        }
+
+        const isValid = !!(/^[a-zA-Z0-9]{6,}$/.exec(username));
+
+        if (!isValid) {
             throw new InvalidUsernameError('Username characters are invalid.');
         }
     }
 
     public static validatePassword(password: string) {
+        if (password.length > 32) {
+            throw new InvalidPasswordError('Password characters exceeded size limit.');
+        }
+
+        if (password.length < 8) {
+            throw new InvalidPasswordError('Password characters less than expected size.');
+        }
+
         const isValid = !!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.exec(password))
-        if (!isValid || password.length > 32) {
-            throw new InvalidUsernameError('Password characters are invalid.');
+        if (!isValid) {
+            throw new InvalidPasswordError('Password characters are invalid.');
         }
     }
 

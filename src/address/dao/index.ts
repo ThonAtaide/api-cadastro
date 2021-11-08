@@ -33,10 +33,11 @@ export class AddressDao {
         };
     }
 
-    public async findAddressById(id: number, trx: Knex.Transaction): Promise<AddressDto | null> {
+    public async findAddressById(id: number, userId: number, trx: Knex.Transaction): Promise<AddressDto | null> {
         const resultSet = await trx('user_address')
             .select('*')
-            .where('id', id);
+            .where('id', id)
+            .where('user_profile_id', userId);
 
         if (resultSet.length === 0) {
             console.log(`Address ${id} not found.`);

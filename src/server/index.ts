@@ -10,6 +10,7 @@ import { UserLoggedDto } from '../auth/model';
 import { generateTransaction } from '../utils/database';
 import knex from '../utils/database';
 import { Knex } from 'knex';
+import JwtManager from "../utils/jwtToken";
 
 export class Server {
     private app: Express;
@@ -19,7 +20,7 @@ export class Server {
     constructor(port: string = '5000') {
         this.port = port;
         this.app = express();
-        this.authService = new Authentication();
+        this.authService = new Authentication(new JwtManager());
     }
 
     private setupTransaction(): void {

@@ -1,5 +1,5 @@
 import { Knex } from "knex";
-import { MissingParameterError, NotFoundError } from "../../exceptions";
+import {MissingParameterError, NotFoundError, UnauthorizedError} from "../../exceptions";
 import { AddressDao } from "../dao";
 import {AddressDto, AddressFieldsValidator, AddressQuery} from "../model";
 
@@ -52,13 +52,17 @@ export class AddressService {
         return {...addressUpdated, user_profile_id: undefined};
     }
 
-    public async findAddressById(id: number, trx: Knex.Transaction): Promise<AddressDto> {
+    public async findAddressById(id: number, userId: number, trx: Knex.Transaction): Promise<AddressDto> {
+
+        if (!userId) {
+            throw new UnauthorizedError(`An Authentication error occurred.`);
+        }
 
         if (!id) {
             throw new MissingParameterError(`Address ${id} identifier is missing.`);
         }
 
-        const address = await this.addressRepository.findAddressById(id, trx);
+        const address = await this.addressRepository.findAddressById(id, userId, trx);
 
         if (!address) {
             throw new NotFoundError(`Address ${id} not found.`);
@@ -70,7 +74,7 @@ export class AddressService {
     public async findAddressByUserId(userId: number, query: AddressQuery, trx: Knex.Transaction): Promise<Array<AddressDto>> {
 
         if (!userId) {
-            throw new MissingParameterError(`User identifier is missing.`);
+            throw new UnauthorizedError(`An Authentication error occurred.`);
         }
 
         const searchResult = await this.addressRepository.findAddressByUser(userId, query, trx);
@@ -79,13 +83,17 @@ export class AddressService {
         })
     }
 
-    public async deleteAddressById(id: number, trx: Knex.Transaction): Promise<void> {
+    public async deleteAddressById(id: number, userId: number, trx: Knex.Transaction): Promise<void> {
+
+        if (!userId) {
+            throw new UnauthorizedError(`An Authentication error occurred.`);
+        }
 
         if (!id) {
             throw new MissingParameterError(`Address ${id} identifier is missing.`);
         }
 
-        const address = await this.addressRepository.findAddressById(id, trx);
+        const address = await this.addressRepository.findAddressById(id, userId, trx);
 
         if (!address) {
             throw new NotFoundError(`Address ${id} not found.`);

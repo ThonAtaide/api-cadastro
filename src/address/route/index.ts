@@ -76,8 +76,9 @@ router.get(
     '/:id',
     validateAuthentication,
     asyncWrapper(async (req: Request, res: Response) => {
+        const userId = req.user;
         const addressId = extractIdParams(req, 'Address');
-        const address = await service.findAddressById(addressId, req.uow as Knex.Transaction);
+        const address = await service.findAddressById(addressId, userId as number, req.uow as Knex.Transaction);
         res.status(200).send(address);
     })
 );
@@ -116,8 +117,9 @@ router.delete(
     '/:id',
     validateAuthentication,
     asyncWrapper(async (req: Request, res: Response) => {
+        const userId = req.user;
         const addressId = extractIdParams(req, 'Address');
-        await service.deleteAddressById(addressId, req.uow as Knex.Transaction);
+        await service.deleteAddressById(addressId, userId as number, req.uow as Knex.Transaction);
         res.status(200).send();
     })
 );
